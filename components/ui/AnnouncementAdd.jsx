@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "./button"
 import {
   Dialog,
@@ -18,15 +18,15 @@ import { BiSolidMessageSquareAdd } from "react-icons/bi"
 
 function AnnouncementAdd() {
   const [announcement, setAnnouncement] = useState({ title: "", content: "" })
-  const [role, setRole] = useState(localStorage.getItem("currentUserRole") ? JSON.parse(localStorage.getItem("currentUserRole")) : "guest");
+  const [role, setRole] = useState("");
 
   const saveAnnouncement = async () => {
     try {
 
       const res = await axios.post("http://localhost:3001/announcements", {
-          title: announcement.title,
-          content: announcement.content,
-          posterPerson: { name: "guest", role: role }
+        title: announcement.title,
+        content: announcement.content,
+        posterPerson: { name: "guest", role: role }
       }
 
       )
@@ -43,12 +43,21 @@ function AnnouncementAdd() {
     const value = e.target.value
     setAnnouncement((annc) => ({ ...annc, [name]: value }))
   }
+
+  useEffect(() => {
+    const fetchRole = () => {
+      const userRole = JSON.parse(localStorage.getItem("currentUserRole"))
+      setRole(userRole)
+
+      }
+      fetchRole()
+  }, []);
   console.log(announcement);
   return (
     <Dialog>
       <DialogTrigger asChild>
         {/* <Button variant="outline"> */}
-        <BiSolidMessageSquareAdd  className="w-8 h-8 cursor-pointer" />
+        <BiSolidMessageSquareAdd className="w-8 h-8 cursor-pointer" />
         {/* </Button> */}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
